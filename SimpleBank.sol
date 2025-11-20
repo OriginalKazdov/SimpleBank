@@ -20,25 +20,25 @@ contract SimpleBank {
   //Deposit
   function deposit() external payable{
       require(msg.value > 0, "Amount should be greater than 0");
-      //Depositar y actualizar balance
+      //Deposit and then update balance
       balances[msg.sender] += msg.value;
       emit Deposit(msg.sender, msg.value);
   }
 
-  //Retirar amount
+  //Withdraw an amount
   function withdraw(uint amount) external nonReentrant{
     require(balances[msg.sender] >= amount, "No Funds left to withdraw");
     balances[msg.sender] -= amount;
-    // Forma más segura y flexible para enviar ETH hoy en día
+    // Best practice for security that's also flexible to send ETH nowadays
+    // Reentrancy guard done manually
     (bool sent, ) = msg.sender.call{value: amount}("");
     require(sent, "Failed to send ether");
     emit Withdraw(msg.sender, amount);
   }
 
-  //Ver saldo
+  //Check Balance
   function balance() external view returns(uint){
-      //Revisa el balance
-      //Lo devuelve, este deberia ser el mas facil
+      //Just a return of the balance using msg.sender to grab the value
       return balances[msg.sender];
   }
 }
